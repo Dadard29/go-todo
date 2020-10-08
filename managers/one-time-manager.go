@@ -24,7 +24,7 @@ func OneTimeManagerList() ([]models.OneTimeDto, error) {
 		return f, nil
 	}
 
-	var ld []models.OneTimeDto
+	var ld = make([]models.OneTimeDto, 0)
 	for _, v := range le {
 		ld = append(ld, v.ToDto())
 	}
@@ -32,7 +32,7 @@ func OneTimeManagerList() ([]models.OneTimeDto, error) {
 	return ld, nil
 }
 
-func OneTimeManagerCreate(o models.OneTimeDto) (models.OneTimeDto, error) {
+func OneTimeManagerCreate(o models.OneTimeInput) (models.OneTimeDto, error) {
 	var f models.OneTimeDto
 
 	e, err := repositories.OneTimeCreate(o.ToEntity())
@@ -54,10 +54,10 @@ func OneTimeManagerDelete(id int) (models.OneTimeDto, error) {
 	return e.ToDto(), nil
 }
 
-func OneTimeManagerUpdate(o models.OneTimeDto) (models.OneTimeDto, error) {
+func OneTimeManagerUpdate(o models.OneTimeInput, id int) (models.OneTimeDto, error) {
 	var f models.OneTimeDto
 
-	e, err := repositories.OneTimePut(o.ToEntity())
+	e, err := repositories.OneTimePut(o.ToEntity(), id)
 	if err != nil {
 		return f, err
 	}

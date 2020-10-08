@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Dadard29/go-todo/api"
 	"github.com/Dadard29/go-todo/models"
+	"time"
 )
 
 func oneTimeExists(id int) bool {
@@ -16,10 +17,27 @@ func oneTimeExists(id int) bool {
 	return o.Id == id
 }
 
-func OneTimePut(p models.OneTimeEntity) (models.OneTimeEntity, error) {
+func oneTimeGetFromCreationDate(createdAt time.Time) (models.OneTimeEntity, error) {
 	var f models.OneTimeEntity
 
-	o, err := OneTimeGet(p.Id)
+	ol, err := OneTimeList()
+	if err != nil {
+		return f, err
+	}
+
+	for _, o := range ol {
+		if o.CreatedAt.Equal(createdAt) {
+			return o, nil
+		}
+	}
+
+	return f, errors.New("one-time task not found in list")
+}
+
+func OneTimePut(p models.OneTimeEntity, id int) (models.OneTimeEntity, error) {
+	var f models.OneTimeEntity
+
+	o, err := OneTimeGet(id)
 	if err != nil {
 		return f, err
 	}
@@ -70,13 +88,21 @@ func OneTimeGet(id int) (models.OneTimeEntity, error) {
 func OneTimeCreate(o models.OneTimeEntity) (models.OneTimeEntity, error) {
 	var f models.OneTimeEntity
 
-	api.Api.Database.Orm.Create(o)
+	createdAt := time.Now().UTC().Round(time.Second)
 
-	if !oneTimeExists(o.Id) {
-		return f, errors.New("error creating new OneTime task")
+	api.Api.Database.Orm.Create(&models.OneTimeEntity{
+		CreatedAt: createdAt,
+		DueAt:    o.DueAt,
+		Title:    o.Title,
+		Category: o.Category,
+	})
+
+	oc, err := oneTimeGetFromCreationDate(createdAt)
+	if err != nil {
+		return f, err
 	}
 
-	return o, nil
+	return oc, nil
 }
 
 func OneTimeList() ([]models.OneTimeEntity, error) {

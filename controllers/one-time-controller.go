@@ -34,9 +34,8 @@ func getId(w http.ResponseWriter, r *http.Request) (int, bool) {
 	return id, true
 }
 
-
-func getOneTimeDtoBody(w http.ResponseWriter, r *http.Request) (models.OneTimeDto, bool) {
-	var f models.OneTimeDto
+func getOneTimeDtoBody(w http.ResponseWriter, r *http.Request) (models.OneTimeInput, bool) {
+	var f models.OneTimeInput
 
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -44,7 +43,7 @@ func getOneTimeDtoBody(w http.ResponseWriter, r *http.Request) (models.OneTimeDt
 		return f, false
 	}
 
-	var o models.OneTimeDto
+	var o models.OneTimeInput
 	err = json.Unmarshal(b, &o)
 	if err != nil {
 		api.Api.BuildErrorResponse(http.StatusBadRequest, "failed to parse json", w)
@@ -67,6 +66,7 @@ func OneTimePost(w http.ResponseWriter, r *http.Request) {
 
 	t, err := managers.OneTimeManagerCreate(o)
 	if err != nil {
+		logger.Error(err.Error())
 		api.Api.BuildErrorResponse(http.StatusInternalServerError, "failed to create task", w)
 		return
 	}
@@ -87,6 +87,7 @@ func OneTimeGet(w http.ResponseWriter, r *http.Request) {
 
 	t, err := managers.OneTimeManagerGet(id)
 	if err != nil {
+		logger.Error(err.Error())
 		api.Api.BuildErrorResponse(http.StatusInternalServerError, "failed to get task", w)
 		return
 	}
@@ -105,9 +106,15 @@ func OneTimePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, err := managers.OneTimeManagerUpdate(o)
+	id, s := getId(w, r)
+	if !s {
+		return
+	}
+
+	t, err := managers.OneTimeManagerUpdate(o, id)
 	if err != nil {
-		api.Api.BuildErrorResponse(http.StatusInternalServerError, "failed to create task", w)
+		logger.Error(err.Error())
+		api.Api.BuildErrorResponse(http.StatusInternalServerError, "failed to update task", w)
 		return
 	}
 
@@ -127,6 +134,7 @@ func OneTimeDelete(w http.ResponseWriter, r *http.Request) {
 
 	t, err := managers.OneTimeManagerDelete(id)
 	if err != nil {
+		logger.Error(err.Error())
 		api.Api.BuildErrorResponse(http.StatusInternalServerError, "failed to delete task", w)
 		return
 	}
@@ -142,6 +150,7 @@ func OneTimeListGet(w http.ResponseWriter, r *http.Request) {
 
 	l, err := managers.OneTimeManagerList()
 	if err != nil {
+		logger.Error(err.Error())
 		api.Api.BuildErrorResponse(http.StatusInternalServerError, "failed to get list", w)
 		return
 	}

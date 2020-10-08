@@ -12,7 +12,7 @@ var Sc *subChecker.SubChecker
 var logger = log.NewLogger("CONTROLLER", logLevel.DEBUG)
 
 const (
-	apiName        = "geopolitics"
+	apiName        = "todo"
 	accessTokenKey = "X-Access-Token"
 )
 
