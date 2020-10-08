@@ -20,6 +20,12 @@ var routes = service.RouteMapping{
 			http.MethodDelete: controllers.OneTimeDelete,
 		},
 	},
+	"/one-time/task/list": service.Route{
+		Description:   "manage task list",
+		MethodMapping: service.MethodMapping{
+			http.MethodGet: controllers.OneTimeListGet,
+		},
+	},
 	"/periodic/task": service.Route{
 		Description: "manage periodic task",
 		MethodMapping: service.MethodMapping{
