@@ -1,0 +1,25 @@
+{
+  "api": {
+    "infos": {
+      "title": "Todo",
+      "description": "Todo list",
+      "contactEmail": "florian.charpentier67@gmail.com",
+      "license": "WTFPL",
+      "licenseUrl": "http://wtfpl.net"
+    },
+    "server": {
+      "host": "0.0.0.0",
+      "port": "8085",
+      "readTimeout": "15",
+      "writeTimeout": "15",
+      "idleTimeout": "60"
+    },
+    "db": {
+      "usernameKey": "USERNAME_DB",
+      "passwordKey": "PASSWORD_DB",
+      "database": "todo",
+      "host": "localhost",
+      "port": "3306"
+    }
+  }
+}
